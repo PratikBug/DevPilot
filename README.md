@@ -29,6 +29,10 @@ Post Review
 - **Vercel AI SDK** + OpenAI (structured output)
 - **Prisma** + SQLite (local dev) / PostgreSQL (production)
 
+## Requirements
+
+- **Node.js 20 LTS** or later (see `.nvmrc`)
+
 ## Quick Start
 
 ### 1. Install dependencies
@@ -79,6 +83,7 @@ DevPilot uses a **GitHub App** (not just OAuth) for repository access, webhooks,
 
 1. Go to [GitHub Developer Settings → GitHub Apps](https://github.com/settings/apps)
 2. Create a new GitHub App:
+   - **Setup URL:** `https://your-domain.com/api/github/setup` (redirects to dashboard after install)
    - **Webhook URL:** `https://your-domain.com/api/webhooks/github` (use ngrok for local dev)
    - **Webhook secret:** generate a random string → `GITHUB_WEBHOOK_SECRET`
    - **Permissions:**

@@ -1,6 +1,6 @@
-import { createOpenAI } from "@ai-sdk/openai";
 import { generateObject } from "ai";
 import { z } from "zod";
+import { getAiModel } from "@/lib/ai/client";
 import type { UnifiedDiffHunk } from "@/lib/providers/repo-provider";
 
 const findingSchema = z.object({
@@ -36,13 +36,6 @@ function filterFrontendDiffs(diffs: UnifiedDiffHunk[]): UnifiedDiffHunk[] {
   );
 }
 
-function getModel() {
-  if (process.env.OPENAI_API_KEY) {
-    return createOpenAI({ apiKey: process.env.OPENAI_API_KEY })("gpt-4o-mini");
-  }
-  throw new Error("OPENAI_API_KEY must be set for AI agents.");
-}
-
 export async function runFrontendDebuggingAgent(
   diffs: UnifiedDiffHunk[]
 ): Promise<AgentFindings> {
@@ -57,7 +50,7 @@ export async function runFrontendDebuggingAgent(
     .join("\n\n");
 
   const { object } = await generateObject({
-    model: getModel(),
+    model: getAiModel(),
     schema: findingsSchema,
     prompt: `You are a senior React/Next.js frontend debugging expert.
 Analyze the following PR diff hunks and identify frontend bugs and issues.
@@ -86,7 +79,7 @@ export async function runCodeReviewAgent(
   const diffText = diffs.map((d) => `--- ${d.filePath}\n${d.patch}`).join("\n\n");
 
   const { object } = await generateObject({
-    model: getModel(),
+    model: getAiModel(),
     schema: findingsSchema,
     prompt: `You are a senior code reviewer. Review this PR diff and the frontend debugging findings.
 Add general review findings (security, error handling, test coverage).
